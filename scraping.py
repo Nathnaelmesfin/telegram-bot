@@ -1,7 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
 
-# Telegram bot token (replace 'YOUR_TELEGRAM_BOT_TOKEN' with your bot token)
 telegram_bot_token = '6354155159:AAEXGFU9Y3pH4dRdcDLL99pPDZ-c5FsAYh0'
 
 telegram_channel_username = '@amharic_Boo'
@@ -10,7 +9,6 @@ url = 'https://www.ethiobookreview.com/amharic'
 response = requests.get(url)
 content2 = response.content
 
-
 def scrape_data(html_code):
     soup = BeautifulSoup(html_code, "lxml")
     books = []
@@ -18,8 +16,7 @@ def scrape_data(html_code):
     items = soup.find_all("div", class_="product")
     for item in items:
         # Image URL
-        image_url = item.find("img")["src"] if item.find(
-            "img") else "Image URL not found"
+        image_url = item.find("img")["src"] if item.find("img") else "Image URL not found"
 
         # Author
         author_tag = item.find("h5")
@@ -42,7 +39,6 @@ def scrape_data(html_code):
 
     return books
 
-
 def send_message_to_telegram(message):
     send_message_url = f"https://api.telegram.org/bot{telegram_bot_token}/sendMessage"
     data = {
@@ -54,17 +50,16 @@ def send_message_to_telegram(message):
     if response.status_code != 200:
         print("Failed to send message to Telegram channel.")
 
-
 books_data = scrape_data(content2)
 
-# Prepare the message with extracted book data
-message = "<b>New Book Releases:</b>\n\n"
+# Send a separate message for each book
 for book in books_data:
-    message += f"<b>Author:</b> {book['Author']}\n"
-    message += f"<b>Category:</b> {book['Category']}\n"
-    message += f"<b>Price:</b> {book['Price']}\n"
-    message += f"<a href='{book['Image URL']}'>View Image</a>\n"
-    message += "\n"
+    #
+    caption = f"<b>Author:</b> {book['Author']}\n"
+    caption += f"<b>Category:</b> {book['Category']}\n"
+    caption += f"<b>Price:</b> {book['Price']}\n"
+    caption += f"<b>image</b> {book['Image URL']}"
+    send_message_to_telegram(caption)
 
-# Send the message to the Telegram channel
-send_message_to_telegram(message)
+    
+   
